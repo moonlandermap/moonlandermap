@@ -103,5 +103,8 @@ wwd.addEventListener("click", function (event) {
 
 function replaceDesc(landerName) {
     const descDiv = document.getElementById('desc')
-    descDiv.innerHTML = "<h1>" + landerName.label + "</h1>"
+    var country = ""
+    var location = ""
+    var desc = ""
+    descDiv.innerHTML = `<h1>${landerName.label}</h1><h3>Country: ${country}</h3><h3>Location: ${location}</h3><p>${desc}</p>`
 }
