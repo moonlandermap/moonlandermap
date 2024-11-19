@@ -36,7 +36,9 @@ wwd.addLayer(placemarkLayer);
 
 // Add other useful layers (optional)
 wwd.addLayer(new WorldWind.CompassLayer());
-wwd.addLayer(new WorldWind.CoordinatesDisplayLayer(wwd));
+
+//add back if doing custom elevation stuff
+//wwd.addLayer(new WorldWind.CoordinatesDisplayLayer(wwd));
 wwd.addLayer(new WorldWind.ViewControlsLayer(wwd));
 
 //stars
@@ -54,10 +56,16 @@ wwd.addEventListener("click", function (event) {
         pickList.objects.forEach(function (pickedObject) {
             if (pickedObject.userObject instanceof WorldWind.Placemark) {
                 var clickedPlacemark = pickedObject.userObject;
-                alert("You clicked on: " + clickedPlacemark.label);
+                replaceDesc(clickedPlacemark);
+                //alert("You clicked on: " + clickedPlacemark.label);
                 // Navigate to a link (optional)
                 // window.location.href = "https://example.com/landing-site";
             }
         });
     }
 });
+
+function replaceDesc(landerName) {
+    const descDiv = document.getElementById('desc')
+    descDiv.innerHTML = "<h1>" + landerName.label + "</h1>"
+}
