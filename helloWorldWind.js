@@ -5,7 +5,7 @@ var wwd = new WorldWind.WorldWindow("canvasOne");
 var moonLayer = new WorldWind.RenderableLayer("Moon");
 var moonTexture = new WorldWind.SurfaceImage(
     new WorldWind.Sector(-90, 90, -180, 180), // Covers the whole globe
-    "moon.jpg" // Replace with the actual path to your Moon texture
+    "moon8k.jpg" // Replace with the actual path to your Moon texture
 );
 moonLayer.addRenderable(moonTexture);
 
@@ -18,7 +18,7 @@ var placemarkLayer = new WorldWind.RenderableLayer("Placemark");
 wwd.addLayer(placemarkLayer);
 
 var placemarkAttributes = new WorldWind.PlacemarkAttributes(null);
-placemarkAttributes.imageSource = "usa.png";
+placemarkAttributes.imageSource = "flags/usa.png";
 placemarkAttributes.imageScale = 0.02;
 placemarkAttributes.labelAttributes.color = WorldWind.Color.WHITE;
 placemarkAttributes.labelAttributes.offset = new WorldWind.Offset(
