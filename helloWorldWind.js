@@ -17,17 +17,53 @@ wwd.addLayer(moonLayer);
 var placemarkLayer = new WorldWind.RenderableLayer("Placemark");
 wwd.addLayer(placemarkLayer);
 
-var placemarkAttributes = new WorldWind.PlacemarkAttributes(null);
-placemarkAttributes.imageSource = "flags/usa.png";
-placemarkAttributes.imageScale = 0.02;
-placemarkAttributes.labelAttributes.color = WorldWind.Color.WHITE;
-placemarkAttributes.labelAttributes.offset = new WorldWind.Offset(
+var usaLander = new WorldWind.PlacemarkAttributes(null);
+usaLander.imageSource = "flags/usa.png";
+usaLander.imageScale = 0.02;
+usaLander.labelAttributes.color = WorldWind.Color.WHITE;
+usaLander.labelAttributes.offset = new WorldWind.Offset(
+    WorldWind.OFFSET_FRACTION, 0.5,
+    WorldWind.OFFSET_FRACTION, 1.0
+);
+
+var ussrLander = new WorldWind.PlacemarkAttributes(null);
+ussrLander.imageSource = "flags/ussr.png";
+ussrLander.imageScale = 0.05;
+ussrLander.labelAttributes.color = WorldWind.Color.WHITE;
+ussrLander.labelAttributes.offset = new WorldWind.Offset(
+    WorldWind.OFFSET_FRACTION, 0.5,
+    WorldWind.OFFSET_FRACTION, 1.0
+);
+
+var chinaLander = new WorldWind.PlacemarkAttributes(null);
+chinaLander.imageSource = "flags/china.png";
+chinaLander.imageScale = 0.08;
+chinaLander.labelAttributes.color = WorldWind.Color.WHITE;
+chinaLander.labelAttributes.offset = new WorldWind.Offset(
+    WorldWind.OFFSET_FRACTION, 0.5,
+    WorldWind.OFFSET_FRACTION, 1.0
+);
+
+var japanLander = new WorldWind.PlacemarkAttributes(null);
+japanLander.imageSource = "flags/japan.png";
+japanLander.imageScale = 0.03;
+japanLander.labelAttributes.color = WorldWind.Color.WHITE;
+japanLander.labelAttributes.offset = new WorldWind.Offset(
+    WorldWind.OFFSET_FRACTION, 0.5,
+    WorldWind.OFFSET_FRACTION, 1.0
+);
+
+var indiaLander = new WorldWind.PlacemarkAttributes(null);
+indiaLander.imageSource = "flags/india.png";
+indiaLander.imageScale = 0.06;
+indiaLander.labelAttributes.color = WorldWind.Color.WHITE;
+indiaLander.labelAttributes.offset = new WorldWind.Offset(
     WorldWind.OFFSET_FRACTION, 0.5,
     WorldWind.OFFSET_FRACTION, 1.0
 );
 
 var position = new WorldWind.Position(-15.5, -130.7, 0); // Latitude, Longitude, Altitude
-var placemark = new WorldWind.Placemark(position, false, placemarkAttributes);
+var placemark = new WorldWind.Placemark(position, false, usaLander);
 placemark.label = "Ranger 4";
 placemark.alwaysOnTop = true;
 
