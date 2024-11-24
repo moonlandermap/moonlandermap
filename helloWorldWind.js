@@ -1,3 +1,32 @@
+async function loadCSVToMap(csvFilePath) {
+    const response = await fetch(csvFilePath);
+    const csvText = await response.text();
+
+    const rows = csvText.split("\n").map(row => row.split(","));
+
+    // Create a Map, skipping the first 4 rows
+    const csvMap = new Map();
+
+    rows.forEach((row, index) => {
+        if (index < 4 || row[0].trim() === "") return; // Skip header rows or empty keys
+        const key = row[0].trim();
+        const values = row.slice(1).map(val => val.trim()); // The rest of the row
+        csvMap.set(key, values);
+    });
+
+    return csvMap;
+}
+
+function replaceDesc(landerName) {
+    const descDiv = document.getElementById('desc')
+    var country = ""
+    var location = ""
+    var desc = ""
+    descDiv.innerHTML = `<h1>${landerName.label}</h1><h3>Country: ${country}</h3><h3>Location: ${location}</h3><p>${desc}</p>`
+}
+
+
+
 // Create a WorldWind instance
 var wwd = new WorldWind.WorldWindow("canvasOne");
 
@@ -101,10 +130,9 @@ wwd.addEventListener("click", function (event) {
     }
 });
 
-function replaceDesc(landerName) {
-    const descDiv = document.getElementById('desc')
-    var country = ""
-    var location = ""
-    var desc = ""
-    descDiv.innerHTML = `<h1>${landerName.label}</h1><h3>Country: ${country}</h3><h3>Location: ${location}</h3><p>${desc}</p>`
-}
+loadCSVToMap("data.csv")
+    .then(map => {
+        console.log(map);
+    })
+    .catch(err => console.error("Error loading CSV:", err));
+
