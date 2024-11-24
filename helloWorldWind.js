@@ -17,12 +17,33 @@ async function loadCSVToMap(csvFilePath) {
     return csvMap;
 }
 
-function replaceDesc(landerName) {
+async function loadTSVToMap(tsvFilePath) {
+    const response = await fetch(tsvFilePath);
+    const tsvText = await response.text();
+
+    const rows = tsvText.split("\n").map(row => row.split("\t"));
+
+    // Create a Map, skipping the first 4 rows
+    const tsvMap = new Map();
+
+    rows.forEach((row, index) => {
+        if (index < 4 || row[0].trim() === "") return; // Skip header rows or empty keys
+        const key = row[0].trim();
+        const values = row.slice(1).map(val => val.trim()); // The rest of the row
+        tsvMap.set(key, values);
+    });
+
+    return tsvMap;
+}
+
+function replaceDesc(landerName, map) {
     const descDiv = document.getElementById('desc')
-    var country = ""
-    var location = ""
-    var desc = ""
-    descDiv.innerHTML = `<h1>${landerName.label}</h1><h3>Country: ${country}</h3><h3>Location: ${location}</h3><p>${desc}</p>`
+    var data = map.get(landerName);
+    var country = data[1];
+    var location = data[8];
+    var desc = data[11];
+    var startDate = data[2];
+    descDiv.innerHTML = `<h1>${landerName}</h1><h3>Country: ${country}</h3><h3>Mission Start Date: ${startDate}</h3><h3>Location: ${location}</h3><p>${desc}</p>`
 }
 
 
@@ -91,14 +112,6 @@ indiaLander.labelAttributes.offset = new WorldWind.Offset(
     WorldWind.OFFSET_FRACTION, 1.0
 );
 
-var position = new WorldWind.Position(-15.5, -130.7, 0); // Latitude, Longitude, Altitude
-var placemark = new WorldWind.Placemark(position, false, usaLander);
-placemark.label = "Ranger 4";
-placemark.alwaysOnTop = true;
-
-placemarkLayer.addRenderable(placemark);
-wwd.addLayer(placemarkLayer);
-
 // Add other useful layers (optional)
 wwd.addLayer(new WorldWind.CompassLayer());
 
@@ -112,27 +125,53 @@ var starFieldLayer = new WorldWind.StarFieldLayer();
 wwd.addLayer(starFieldLayer);
 
 
-wwd.addEventListener("click", function (event) {
-    var x = event.clientX;
-    var y = event.clientY;
-    var pickList = wwd.pick(wwd.canvasCoordinates(x, y));
-
-    if (pickList.objects.length > 0) {
-        pickList.objects.forEach(function (pickedObject) {
-            if (pickedObject.userObject instanceof WorldWind.Placemark) {
-                var clickedPlacemark = pickedObject.userObject;
-                replaceDesc(clickedPlacemark);
-                //alert("You clicked on: " + clickedPlacemark.label);
-                // Navigate to a link (optional)
-                // window.location.href = "https://example.com/landing-site";
-            }
-        });
-    }
-});
-
-loadCSVToMap("data.csv")
+loadTSVToMap("data.tsv")
     .then(map => {
         console.log(map);
+        map.forEach((value, key) => {
+            //console.log(key)
+            var position = new WorldWind.Position(parseFloat(value[6]), parseFloat(value[7]), 0); // Latitude, Longitude, Altitude
+            var landerCountry = usaLander;
+            switch(value[1]) {
+                case "USA":
+                    landerCountry = usaLander;
+                    break;
+                case "USSR":
+                    landerCountry = ussrLander;
+                    break;
+                case "China":
+                    landerCountry = chinaLander;
+                    break;
+                case "India":
+                    landerCountry = indiaLander;
+                    break;
+                case "Japan":
+                    landerCountry = japanLander;
+                    break;
+            }
+            var placemark = new WorldWind.Placemark(position, false, landerCountry);
+            placemark.label = key;
+            placemark.alwaysOnTop = true;
+
+            placemarkLayer.addRenderable(placemark);    
+
+        });
+        wwd.addEventListener("click", function (event) {
+            var x = event.clientX;
+            var y = event.clientY;
+            var pickList = wwd.pick(wwd.canvasCoordinates(x, y));
+        
+            if (pickList.objects.length > 0) {
+                pickList.objects.forEach(function (pickedObject) {
+                    if (pickedObject.userObject instanceof WorldWind.Placemark) {
+                        var clickedPlacemark = pickedObject.userObject;
+                        replaceDesc(clickedPlacemark.label, map);
+                        //alert("You clicked on: " + clickedPlacemark.label);
+                        // Navigate to a link (optional)
+                        // window.location.href = "https://example.com/landing-site";
+                    }
+                });
+            }
+        });
     })
     .catch(err => console.error("Error loading CSV:", err));
-
