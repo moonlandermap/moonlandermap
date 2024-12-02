@@ -47,6 +47,10 @@ function replaceDesc(landerName, map) {
 }
 
 
+//set the yearBox value to last year in data set
+var year = document.getElementById('year');
+year.value = 2024;
+
 
 // Create a WorldWind instance
 var wwd = new WorldWind.WorldWindow("canvasOne");
@@ -64,8 +68,10 @@ wwd.addLayer(moonLayer);
 
 
 //add markers to moon
-var placemarkLayer = new WorldWind.RenderableLayer("Placemark");
-wwd.addLayer(placemarkLayer);
+//var placemarkLayer = new WorldWind.RenderableLayer("Placemark");
+//wwd.addLayer(placemarkLayer);
+
+var placemarkYearMap = new Map();
 
 var usaLander = new WorldWind.PlacemarkAttributes(null);
 usaLander.imageSource = "flags/usa.png";
@@ -149,12 +155,44 @@ loadTSVToMap("data.tsv")
                     landerCountry = japanLander;
                     break;
             }
+            //parse year here
+            var date = value[2];
+            var date_components = date.split(" ");
+            var year_str = date_components[date_components.length - 1];
+            var year = parseInt(year_str);
             var placemark = new WorldWind.Placemark(position, false, landerCountry);
             placemark.label = key;
             placemark.alwaysOnTop = true;
+            if (placemarkYearMap.has(year)) {
+                var layer = placemarkYearMap.get(year);
+                layer.addRenderable(placemark);
+            } else {
+                var layer = new WorldWind.RenderableLayer("" + year);
+                placemarkYearMap.set(year, layer);
+                layer.addRenderable(placemark);
+                wwd.addLayer(layer);
+            }
 
-            placemarkLayer.addRenderable(placemark);    
+            //placemarkLayer.addRenderable(placemark);    
 
+        });
+        yearBox = document.getElementById('year');
+        yearBox.addEventListener('input', () => {
+            //console.log(`${yearBox.value}`)
+            placemarkYearMap.forEach(element => {
+                if (parseInt(element.displayName) <= yearBox.value) {
+                    element.enabled = true;
+                } else {
+                    element.enabled = false;
+                }
+            });
+        });
+        placemarkYearMap.forEach(element => {
+            if (parseInt(element.displayName) <= yearBox.value) {
+                element.enabled = true;
+            } else {
+                element.enabled = false;
+            }
         });
         wwd.addEventListener("click", function (event) {
             var x = event.clientX;
