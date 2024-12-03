@@ -43,7 +43,7 @@ function replaceDesc(landerName, map) {
     var location = data[8];
     var desc = data[11];
     var startDate = data[2];
-    var type = data[1];
+    var type = data[0];
     descDiv.innerHTML = `<h1>${landerName}</h1><h3>Country: ${country}</h3><h3>Mission Start Date: ${startDate}</h3><h3>Type: ${type}</h3><h3>Location: ${location}</h3><p>${desc}</p>`
 }
 
