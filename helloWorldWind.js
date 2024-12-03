@@ -48,9 +48,9 @@ function replaceDesc(landerName, map) {
 }
 
 
-//set the yearBox value to last year in data set
+//set the yearBox value to first year in data set
 var year = document.getElementById('year');
-year.value = 2024;
+year.value = 1959;
 
 
 // Create a WorldWind instance
