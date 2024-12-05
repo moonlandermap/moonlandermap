@@ -47,6 +47,30 @@ function replaceDesc(landerName, map) {
     descDiv.innerHTML = `<h1>${landerName}</h1><h3>Country: ${country}</h3><h3>Mission Start Date: ${startDate}</h3><h3>Type: ${type}</h3><h3>Location: ${location}</h3><p>${desc}</p>`
 }
 
+function update_constraints(placemarkMap) {
+    var yearBox = document.getElementById('year');
+    var countryBox = document.getElementById('country');
+
+    placemarkMap.forEach(element => {
+        key_components = element.displayName.split(" ");
+        var country_matches = false;
+        if (countryBox.value === "All") {
+            country_matches = true;
+        } else {
+            //console.log(`box: ${countryBox.name} : val: ${key_components[0]}`);
+            if (countryBox.value === key_components[0]) {
+                country_matches = true;
+            }
+        }
+        if (parseInt(key_components[1]) <= yearBox.value && country_matches) {
+            element.enabled = true;
+        } else {
+            element.enabled = false;
+        }
+    });
+
+}
+
 
 //set the yearBox value to first year in data set
 var year = document.getElementById('year');
@@ -72,7 +96,7 @@ wwd.addLayer(moonLayer);
 //var placemarkLayer = new WorldWind.RenderableLayer("Placemark");
 //wwd.addLayer(placemarkLayer);
 
-var placemarkYearMap = new Map();
+var placemarkMap = new Map();
 
 var usaLander = new WorldWind.PlacemarkAttributes(null);
 usaLander.imageSource = "flags/usa.png";
@@ -160,16 +184,18 @@ loadTSVToMap("data.tsv")
             var date = value[2];
             var date_components = date.split(" ");
             var year_str = date_components[date_components.length - 1];
+            var country_str = value[1];
             var year = parseInt(year_str);
+            var layer_map_key = `${country_str} ${year_str}`
             var placemark = new WorldWind.Placemark(position, false, landerCountry);
             placemark.label = key;
             placemark.alwaysOnTop = true;
-            if (placemarkYearMap.has(year)) {
-                var layer = placemarkYearMap.get(year);
+            if (placemarkMap.has(layer_map_key)) {
+                var layer = placemarkMap.get(layer_map_key);
                 layer.addRenderable(placemark);
             } else {
-                var layer = new WorldWind.RenderableLayer("" + year);
-                placemarkYearMap.set(year, layer);
+                var layer = new WorldWind.RenderableLayer(layer_map_key);
+                placemarkMap.set(layer_map_key, layer);
                 layer.addRenderable(placemark);
                 wwd.addLayer(layer);
             }
@@ -180,21 +206,13 @@ loadTSVToMap("data.tsv")
         yearBox = document.getElementById('year');
         yearBox.addEventListener('input', () => {
             //console.log(`${yearBox.value}`)
-            placemarkYearMap.forEach(element => {
-                if (parseInt(element.displayName) <= yearBox.value) {
-                    element.enabled = true;
-                } else {
-                    element.enabled = false;
-                }
-            });
+            update_constraints(placemarkMap);
         });
-        placemarkYearMap.forEach(element => {
-            if (parseInt(element.displayName) <= yearBox.value) {
-                element.enabled = true;
-            } else {
-                element.enabled = false;
-            }
+        var countryBox = document.getElementById('country');
+        countryBox.addEventListener('input', () => {
+            update_constraints(placemarkMap);
         });
+        update_constraints(placemarkMap);
         wwd.addEventListener("click", function (event) {
             var x = event.clientX;
             var y = event.clientY;

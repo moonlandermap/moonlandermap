@@ -21,8 +21,20 @@
         </style>
     </head>
     <body>
-        <label for="textBox1">Show landers on/before year:</label>
+        <div style="display:flex">
+        <p>Show landers on/before year:</p>
+        <label for="textBox1"></label>
             <input type="number" id="year" placeholder="0"><br><br>
+        <p>Select a country:</p>
+        <select id="country" name="country">
+            <option value="All">All</option>
+            <option value="USA">United States</option>
+            <option value="USSR">Soviet Union</option>
+            <option value="China">China</option>
+            <option value="India">India</option>
+            <option value="Japan">Japan</option>
+        </select>
+        </div>
         <div class="container">
             
             <canvas id="canvasOne" width="900" height="700">
